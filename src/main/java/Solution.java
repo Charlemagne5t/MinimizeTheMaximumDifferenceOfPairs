@@ -1,35 +1,44 @@
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+
 
 public class Solution {
     public int minimizeMax(int[] nums, int p) {
+        if(p == 0){
+            return 0;
+        }
         Arrays.sort(nums);
-        int[] absDiffs = new int[nums.length];
-        absDiffs[0] = Integer.MAX_VALUE;
 
-        for (int i = 1; i < nums.length; i++) {
-            absDiffs[i] = Math.abs(nums[i] - nums[i - 1]);
-        }
-        Map<String, Integer> memo = new HashMap<>();
-
-        return dfs(absDiffs, p, 1, 0, memo);
-    }
-
-    private int dfs(int[] absDiffs, int p, int i, int maxDif, Map<String, Integer> memo) {
-        if(memo.containsKey(p + " " + i + " " + maxDif)){
-            return memo.get(p + " " + i + " " + maxDif);
-        }
-        if (p == 0) {
-            return maxDif;
-        }
-        if (i >= absDiffs.length) {
-            return Integer.MAX_VALUE / 2;
+        int left = 0;
+        int right = nums[nums.length - 1] - nums[0];
+        int result = Integer.MAX_VALUE;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (ableToFormPPairs(nums, p, mid)) {
+                result = Math.min(mid, result);
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
         }
 
-        int result = Math.min(dfs(absDiffs, p - 1, i + 2, Math.max(maxDif, absDiffs[i]), memo), dfs(absDiffs, p, i + 1, maxDif, memo));
-        memo.put(p + " " + i + " " + maxDif, result);
         return result;
     }
 
+    private boolean ableToFormPPairs(int[] nums, int p, int target) {
+        int count = 0;
+
+        for (int i = 1; i < nums.length; i++) {
+            if (Math.abs(nums[i] - nums[i - 1]) <= target) {
+                count++;
+                i++;
+                if (count == p) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }
+
+
