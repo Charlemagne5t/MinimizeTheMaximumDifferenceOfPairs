@@ -32,6 +32,7 @@ public class Solution {
                 count++;
                 i++;
                 if (count == p) {
+
                     return true;
                 }
             }
